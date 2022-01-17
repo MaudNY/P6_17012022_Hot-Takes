@@ -3,6 +3,7 @@ const router = express.Router();
 
 const sauceCtrl = require('../controllers/sauce');
 
-router.post('/sauces', sauceCtrl.getAllSauces);
+router.get('/sauces/:id', sauceCtrl.getOneSauce);
+router.get('/sauces', sauceCtrl.getAllSauces);
 
 module.exports = router;
