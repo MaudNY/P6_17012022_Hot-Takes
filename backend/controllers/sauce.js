@@ -1,5 +1,6 @@
 const Sauce = require('../models/sauce');
 const fs = require('fs');
+const sauce = require('../models/sauce');
 
 exports.createSauce = (req, res) => {
     const sauceObject = JSON.parse(req.body.sauce);
@@ -61,8 +62,40 @@ exports.getAllSauces = (req, res) => {
 
 exports.reactToSauce = (req, res) => {
     if (req.body.like === 1) {
-        Sauce.updateOne({ _id: req.params.id })
-            .then(() => res.status(201).json({ message: 'Sauce likée !' }))
-            .catch(error => res.status(400).json({ error }));
+        Sauce.findOne({ _id: req.params.id })
+            .then(sauce => {
+                sauce.updateOne({
+                    $push: { usersLiked: sauce.userId },
+                    $inc: { likes: 1 }
+                })
+                    .then(() => res.status(201).json({ message: 'Sauce likée !' }))
+                    .catch(error => res.status(404).json({ error }));
+            })
+            .catch(error => res.status(500).json({ error }));
+    } if (req.body.like === -1) {
+        Sauce.findOne({ _id: req.params.id })
+        .then(sauce => {
+            sauce.updateOne({
+                $push: { usersDisliked: sauce.userId },
+                $inc: { dislikes: 1 }
+            })
+                .then(() => res.status(201).json({ message: 'Sauce dislikée...' }))
+                .catch(error => res.status(404).json({ error }));
+        })
+        .catch(error => res.status(500).json({ error }));
+    } if (req.body.like === 0) {
+        Sauce.findOne({ _id: req.params.id })
+            .then(sauce => {
+                if (sauce.usersLiked.includes(sauce.userId)) {
+                    sauce.updateOne({
+                        $pull: { usersLiked: sauce.userId }
+                    })
+                } if (sauce.usersDisliked.includes(sauce.userId)) {
+                    sauce.updateOne({
+                        $pull: { usersDisliked: sauce.userId}
+                    })
+                }
+            })
+            .catch(error => res.status(500).json({ error }));
     }
 };
