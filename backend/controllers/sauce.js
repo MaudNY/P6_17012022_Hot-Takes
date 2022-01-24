@@ -36,9 +36,13 @@ exports.deleteOneSauce = (req, res) => {
     Sauce.findOne({ _id: req.params.id })
         .then(sauce => {
             if (!sauce) {
-                res.status(404).json({ error });
+                res.status(404).json({ message: 'Sauce introuvable...' });
+
+                return;
             } if (sauce.userId !== req.auth.userId) {
                 res.status(403).json({ message: 'Requête non autorisée !' });
+
+                return;
             }
             const filename = sauce.imageUrl.split('/images')[1];
             fs.unlink(`images/${filename}`, () => {
@@ -63,47 +67,51 @@ exports.getAllSauces = (req, res) => {
 };
 
 exports.reactToSauce = (req, res) => {
-    if (req.body.like === 0) {
-        Sauce.findOne({ _id: req.params.id })
-            .then(sauce => {
+    Sauce.findOne({ _id: req.params.id })
+        .then(sauce => {
+            if (!sauce) {
+                res.status(404).json({ message: 'Sauce introuvable...' });
+
+                return;
+            } else if (req.body.like === 0) {
                 if (sauce.usersLiked.includes(sauce.userId)) {
                     sauce.updateOne({
                         $pull: { usersLiked: sauce.userId },
                         $inc: { likes: -1 }
                     })
-                    .then(() => res.status(200).json({ message: 'Like supprimé' }))
-                    .catch(error => res.status(404).json({ error }));
-                } if (sauce.usersDisliked.includes(sauce.userId)) {
+                        .then(() => res.status(200).json({ message: 'Like supprimé...' }))
+                        .catch(error => res.status(500).json({ error }));
+
+                    return;
+                } else if (sauce.usersDisliked.includes(sauce.userId)) {
                     sauce.updateOne({
                         $pull: { usersDisliked: sauce.userId},
                         $inc: { dislikes: -1 }
                     })
-                    .then(() => res.status(200).json({ message: 'Dislike supprimé' }))
-                    .catch(error => res.status(404).json({ error }));
+                        .then(() => res.status(200).json({ message: 'Dislike supprimé (ouf !)' }))
+                        .catch(error => res.status(500).json({ error }));
+
+                    return;
                 }
-            })
-            .catch(error => res.status(500).json({ error }));
-    } if (req.body.like === 1) {
-        Sauce.findOne({ _id: req.params.id })
-            .then(sauce => {
+            } else if (req.body.like === 1) {
                 sauce.updateOne({
-                    $push: { usersLiked: sauce.userId },
-                    $inc: { likes: 1 }
-                })
-                    .then(() => res.status(201).json({ message: 'Sauce likée !' }))
-                    .catch(error => res.status(404).json({ error }));
-            })
-            .catch(error => res.status(500).json({ error }));
-    } if (req.body.like === -1) {
-        Sauce.findOne({ _id: req.params.id })
-        .then(sauce => {
-            sauce.updateOne({
-                $push: { usersDisliked: sauce.userId },
-                $inc: { dislikes: 1 }
-            })
-                .then(() => res.status(201).json({ message: 'Sauce dislikée...' }))
-                .catch(error => res.status(404).json({ error }));
+                        $push: { usersLiked: sauce.userId },
+                        $inc: { likes: 1 }
+                    })
+                        .then(() => res.status(200).json({ message: 'Sauce likée !' }))
+                        .catch(error => res.status(500).json({ error }));
+                
+                return;
+            } else if (req.body.like === -1) {
+                sauce.updateOne({
+                        $push: { usersDisliked: sauce.userId },
+                        $inc: { dislikes: 1 }
+                    })
+                        .then(() => res.status(200).json({ message: 'Sauce dislikée...' }))
+                        .catch(error => res.status(500).json({ error }));
+
+                return;
+            }
         })
-        .catch(error => res.status(500).json({ error }));
-    }
+        .catch(error => res.status(400).json({ error }));
 };
