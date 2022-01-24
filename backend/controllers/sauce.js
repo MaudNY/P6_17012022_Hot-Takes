@@ -61,7 +61,27 @@ exports.getAllSauces = (req, res) => {
 };
 
 exports.reactToSauce = (req, res) => {
-    if (req.body.like === 1) {
+    if (req.body.like === 0) {
+        Sauce.findOne({ _id: req.params.id })
+            .then(sauce => {
+                if (sauce.usersLiked.includes(sauce.userId)) {
+                    sauce.updateOne({
+                        $pull: { usersLiked: sauce.userId },
+                        $inc: { likes: -1 }
+                    })
+                    .then(() => res.status(200).json({ message: 'Like supprimé' }))
+                    .catch(error => res.status(404).json({ error }));
+                } if (sauce.usersDisliked.includes(sauce.userId)) {
+                    sauce.updateOne({
+                        $pull: { usersDisliked: sauce.userId},
+                        $inc: { dislikes: -1 }
+                    })
+                    .then(() => res.status(200).json({ message: 'Dislike supprimé' }))
+                    .catch(error => res.status(404).json({ error }));
+                }
+            })
+            .catch(error => res.status(500).json({ error }));
+    } if (req.body.like === 1) {
         Sauce.findOne({ _id: req.params.id })
             .then(sauce => {
                 sauce.updateOne({
@@ -83,19 +103,5 @@ exports.reactToSauce = (req, res) => {
                 .catch(error => res.status(404).json({ error }));
         })
         .catch(error => res.status(500).json({ error }));
-    } if (req.body.like === 0) {
-        Sauce.findOne({ _id: req.params.id })
-            .then(sauce => {
-                if (sauce.usersLiked.includes(sauce.userId)) {
-                    sauce.updateOne({
-                        $pull: { usersLiked: sauce.userId }
-                    })
-                } if (sauce.usersDisliked.includes(sauce.userId)) {
-                    sauce.updateOne({
-                        $pull: { usersDisliked: sauce.userId}
-                    })
-                }
-            })
-            .catch(error => res.status(500).json({ error }));
     }
 };
