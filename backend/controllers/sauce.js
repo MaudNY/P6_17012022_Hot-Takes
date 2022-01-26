@@ -34,11 +34,16 @@ exports.modifyOneSauce = (req, res) => {
         .then(sauce => {
             const fileToBeDeleted = sauce.imageUrl.split('/images')[1];
             if (sauceUpcomingFile) {
-                fs.unlink(`images/${fileToBeDeleted}`, () => {
-                    Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
-                        .then(() => res.status(200).json({ message: 'Sauce modifiée !' }))
-                        .catch(error => res.status(400).json({ error }));
-                });
+                Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+                    .then(() => {
+                        res.status(200).json({ message: 'Sauce modifiée !' })
+                        fs.unlink(`images/${fileToBeDeleted}`, (err) => {
+                            if (err) {
+                                console.error(err);
+                            }
+                        });
+                    })
+                    .catch(error => res.status(400).json({ error }));
                 
                 return;
             } else {
@@ -64,12 +69,19 @@ exports.deleteOneSauce = (req, res) => {
 
                 return;
             }
-            const filename = sauce.imageUrl.split('/images')[1];
-            fs.unlink(`images/${filename}`, () => {
-                Sauce.deleteOne({ _id: req.params.id })
-                    .then(() => res.status(200).json({ message: 'Sauce supprimée !' }))
-                    .catch(error => res.status(400).json({ error }));
-            });
+
+            const fileToBeDeleted = sauce.imageUrl.split('/images')[1];
+
+            Sauce.deleteOne({ _id: req.params.id })
+                .then(() => {
+                    res.status(200).json({ message: 'Sauce supprimée !' })
+                    fs.unlink(`images/${fileToBeDeleted}`, (err) => {
+                        if (err) {
+                            console.error(err);
+                        }
+                    });
+                })
+                .catch(error => res.status(400).json({ error }));
         })
         .catch(error => res.status(500).json({ error }));
 };
