@@ -18,20 +18,6 @@ exports.createSauce = (req, res) => {
         .catch(error => res.status(400).json({ error }));
 };
 
-exports.modifyOneSauce2 = (req, res) => {
-    const sauceObject = req.file ?
-    {
-        ...JSON.parse(req.body.sauce),
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : { ...req.body };
-    if (sauceObject.userId !== req.auth.userId) {
-        res.status(403).json({ message: 'Requête non autorisée !' });
-    }
-    Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
-        .then(() => res.status(200).json({ message: 'Sauce modifiée !' }))
-        .catch(error => res.status(400).json({ error }));
-};
-
 exports.modifyOneSauce = (req, res) => {
     const sauceUpcomingFile = req.file;
     const sauceObject = req.file ?
