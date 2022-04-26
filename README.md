@@ -18,13 +18,11 @@ BACKEND:
 
 > Database: MongoDB
 
-FRONTEND *(not did it myself)*:
+FRONTEND *(not did it myself - you can find the updated frontend repository [here](https://github.com/OpenClassrooms-Student-Center/Web-Developer-P6))*:
 
 > Framework: Angular
 
 > CSS Preprocessor: Sass
-
-*(you can find the updated frontend repository [here](https://github.com/OpenClassrooms-Student-Center/Web-Developer-P6))*
 
 <h2>Run installation!</h2>
 
