@@ -29,10 +29,11 @@ FRONTEND *(not did it myself - you can find the updated frontend repository [her
 1. Create a local dedicated folder in your computer and open your code editor
 2. Open the created folder and open a new terminal
 3. Run ` git clone https://github.com/MaudNY/P6_17012022_Hot-Takes.git ` to clone the code
-4. Run ` cd backend `, then ` nodemon server ` to set up the backend server (http://localhost:3000) 
-5. Open another new terminal
-6. Run ` cd frontend `, then either ` npm run start ` or ` npm run start:linux:darwin ` or ` npm run start:win32 ` (http://127.0.0.1:8081/login)
-7. Make sure to open another terminal before either staging, commiting or pushing your potential updates ;)
+4. Run ` npm install `
+5. Run ` cd backend `, then ` nodemon server ` to set up the backend server (http://localhost:3000) 
+6. Open another new terminal
+7. Run ` cd frontend `, then either ` npm run start ` or ` npm run start:linux:darwin ` or ` npm run start:win32 ` (http://127.0.0.1:8081/login)
+8. Make sure to open another terminal before either staging, commiting or pushing your potential updates ;)
 
 <h2>Author</h2>
 
