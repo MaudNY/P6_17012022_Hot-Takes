@@ -1,4 +1,4 @@
-# French Gourmet views Application "Hot Takes" / BACKEND
+# French Gourmet views Application "Hot Takes" / BACKEND (*fictitious company*)
 
 !["Hot Takes" Application - Presentation image](https://github.com/MaudNY/P6_17012022_Hot-Takes/blob/main/HotTakes-photo.png "Hot Takes application presentation image")
 
